@@ -11,6 +11,14 @@ learningOutcomes:
   - Understand rate limits and cost management strategies.
 ---
 
+## Learning Outcomes
+
+- Set up OpenAI API credentials securely.
+- Make API calls to generate chatbot responses.
+- Understand the request and response structure of the Chat Completions API.
+- Implement production-ready error handling with retries and exponential backoff.
+- Understand rate limits and cost management strategies.
+
 With the conceptual foundations in place, it's time to write code. In this section you'll set up the OpenAI API, make your first chatbot request, understand the structure of what goes in and what comes back, and build error handling that's robust enough for production use.
 
 ## Setting Up the OpenAI API

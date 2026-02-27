@@ -9,6 +9,13 @@ learningOutcomes:
   - Identify real-world chatbot applications and their requirements.
 ---
 
+## Learning Outcomes
+
+- Understand the evolution from rule-based to LLM-powered chatbots.
+- Describe modern chatbot architecture and its key components.
+- Distinguish between stateless and stateful chatbot systems.
+- Identify real-world chatbot applications and their requirements.
+
 Chatbots have been around for decades, but the ones we build today are fundamentally different from their predecessors. In this section we trace that evolution, look at the architecture of a modern chatbot, and introduce a distinction — stateless vs stateful — that will shape every design decision you make throughout this course.
 
 ## The Evolution: From ELIZA to ChatGPT

@@ -10,6 +10,13 @@ learningOutcomes:
   - Craft effective system prompts for different use cases.
 ---
 
+## Learning Outcomes
+
+- Build a stateless chatbot for FAQ-style interactions.
+- Build a stateful chatbot that maintains conversation history.
+- Implement token budget management to control costs and stay within context limits.
+- Craft effective system prompts for different use cases.
+
 In the previous section you made individual API calls. Now we'll wrap that capability into reusable chatbot classes — first a stateless one, then a stateful one — and tackle the practical challenges that arise when conversations get long. We'll also look closely at system prompts, which are your primary tool for shaping a chatbot's behaviour.
 
 ## Building a Stateless Chatbot

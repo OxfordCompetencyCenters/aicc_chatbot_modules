@@ -10,6 +10,13 @@ learningOutcomes:
   - Use sampling parameters like temperature and top-p to control LLM output.
 ---
 
+## Learning Outcomes
+
+- Explain how Large Language Models work at a conceptual level.
+- Understand what tokens are and why they matter for cost and performance.
+- Describe context windows and their limitations.
+- Use sampling parameters like temperature and top-p to control LLM output.
+
 Before we start writing code, we need to understand what's happening under the hood when we call an LLM API. You don't need to become a machine learning researcher, but a working understanding of these concepts — tokens, context windows, and sampling parameters — is essential for building chatbots that work reliably and cost-effectively.
 
 ## How Large Language Models Work
