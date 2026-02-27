@@ -88,17 +88,17 @@ Agentic RAG with multi-step retrieval and query expansion. Cross-encoder re-rank
 
 Short-term vs long-term memory architectures. Conversation window management strategies. Conversation summarisation techniques. Retrieval-based memory systems. Selective memory and importance scoring. User profile building and personalisation.
 
-### Module 5: Deployment Architecture
+### Module 5 (Optional): Deployment Architecture
 **Duration:** 3 hours
 
 RESTful API design with FastAPI. Frontend development (Streamlit, React). Docker containerisation and multi-stage builds. Docker Compose for local development. Cloud deployment (Google Cloud Run). JWT authentication and secrets management.
 
-### Module 6: Chatbot Analytics & Observability
+### Module 6 (Optional): Chatbot Analytics & Observability
 **Duration:** 3.5 hours
 
 User engagement metrics (DAU, retention, sessions). Conversation quality analytics. Performance monitoring (latency, cost tracking). Structured logging and distributed tracing with OpenTelemetry. A/B testing and experimentation.
 
-### Module 7: Production Best Practices & Advanced Topics
+### Module 7 (Optional): Production Best Practices & Advanced Topics
 **Duration:** 2.5 hours
 
 Production prompt engineering patterns. Content moderation and safety (OpenAI Moderation API). PII detection and redaction. Cost optimisation strategies. Horizontal scaling with Redis and load balancing. Rate limiting and backpressure. Alternative LLM providers (Anthropic, open-source). Production deployment checklist.
@@ -137,9 +137,9 @@ aicc_chatbot_modules/
 ├── module_2/          # RAG — Vector Embeddings & Semantic Search
 ├── module_3/          # Advanced RAG & Knowledge Graph Integration
 ├── module_4/          # Memory & Context Management
-├── module_5/          # Deployment Architecture
-├── module_6/          # Chatbot Analytics & Observability
-├── module_7/          # Production Best Practices & Advanced Topics
+├── module_5(optional)/ # Deployment Architecture
+├── module_6(optional)/ # Chatbot Analytics & Observability
+├── module_7(optional)/ # Production Best Practices & Advanced Topics
 ├── module_8/          # Capstone Project Integration
 └── README.md
 ```
