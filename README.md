@@ -108,35 +108,6 @@ Production prompt engineering patterns. Content moderation and safety (OpenAI Mo
 
 Complete system architecture review. Component integration and troubleshooting. Professional documentation (README, Architecture Decision Records). Presentation preparation. Code quality standards. Final deliverables and submission.
 
-## Learning Progression
-
-1. **Foundations (Weeks 1–2):** Basic chatbot → RAG-powered chatbot
-2. **Advanced Features (Weeks 3–4):** RAG optimisation → Memory management
-3. **Production Ready (Weeks 5–7):** Deployment → Monitoring → Hardening
-4. **Integration (Week 8):** Complete project assembly and presentation
-
-## Assessment
-
-### Continuous Assessment (60%)
-
-- Weekly lab exercises (40%)
-- Project checkpoints 1–6 (10%)
-- Participation and code reviews (10%)
-
-### Final Capstone Project (40%)
-
-The capstone is a production-ready chatbot built incrementally across all 8 modules. Requirements:
-
-- RAG-powered knowledge retrieval
-- Conversation memory and context management
-- Analytics and monitoring dashboard
-- Deployed backend API (FastAPI)
-- Frontend interface
-- Dockerised application
-- Complete documentation
-
-Evaluation criteria: functionality and completeness (15%), code quality and architecture (10%), documentation (5%), presentation and demo (10%).
-
 ## Course Outcomes
 
 Upon completion, participants will be able to:
@@ -174,8 +145,3 @@ aicc_chatbot_modules/
 ```
 
 Each module directory contains numbered markdown files covering individual topics, with YAML frontmatter specifying dependencies, tags, and learning outcomes.
-
-## Contact
-
-AI Competency Centre | University of Oxford
-Contact: alok.sahu@it.ox.ac.uk
