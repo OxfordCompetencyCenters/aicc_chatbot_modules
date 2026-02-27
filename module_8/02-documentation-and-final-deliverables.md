@@ -1,21 +1,23 @@
 ---
-name: Documentation and Architecture Decisions
+name: Documentation and Final Deliverables
 dependsOn:
-  - troubleshooting-common-issues
-tags: [chatbots, documentation, architecture-decision-records, code-quality]
+  - capstone-architecture-and-troubleshooting
+tags: [chatbots, documentation, architecture-decision-records, code-quality, capstone, deliverables]
 learningOutcomes:
-  - Write a professional README that enables someone to understand, install, and use your project in under 15 minutes.
-  - Create Architecture Decision Records (ADRs) that document the rationale behind key technical choices.
+  - Write a professional README that enables someone to understand, install, and use the project in under 15 minutes.
+  - Create Architecture Decision Records that document the rationale behind key technical choices.
   - Apply code quality standards including type hints, docstrings, input validation, and structured logging.
+  - Compile and verify a complete set of capstone deliverables ready for submission.
 ---
 
 ## Learning Outcomes
 
-- Write a professional README that enables someone to understand, install, and use your project in under 15 minutes.
-- Create Architecture Decision Records (ADRs) that document the rationale behind key technical choices.
+- Write a professional README that enables someone to understand, install, and use the project in under 15 minutes.
+- Create Architecture Decision Records that document the rationale behind key technical choices.
 - Apply code quality standards including type hints, docstrings, input validation, and structured logging.
+- Compile and verify a complete set of capstone deliverables ready for submission.
 
-Great code without documentation is incomplete. A project that works perfectly but can't be understood, installed, or maintained by someone else — including your future self — has limited value. Documentation serves three audiences: users who want to run your chatbot, developers who want to understand or extend it, and reviewers (interviewers, colleagues, or open-source contributors) who want to evaluate its quality. Each audience needs different information, and professional documentation addresses all three.
+A project that works perfectly but can't be understood, installed, or maintained by someone else — including your future self — has limited value. Documentation serves three audiences: users who want to run your chatbot, developers who want to understand or extend it, and reviewers who want to evaluate its quality. Each audience needs different information, and professional documentation addresses all three. This section covers the documentation and code quality standards your capstone should meet, followed by the submission checklist and a final integration exercise.
 
 ## Writing a Professional README
 
@@ -151,13 +153,13 @@ docker run -p 8000:8000 -e OPENAI_API_KEY=sk-... chatbot-api:latest
 - [ ] Advanced analytics dashboard
 ```
 
-Several elements make this README professional. The overview immediately communicates what the project does and who it's for — a reviewer can decide in 10 seconds whether this is relevant to them. The quick start section provides copy-paste commands that get the project running; no one should have to read source code to figure out how to start it. The API examples with curl commands are especially valuable because they let someone test the backend without a frontend. The limitations section demonstrates maturity — you understand the system's boundaries and have thought about trade-offs. The future enhancements section shows vision and direction.
+Several elements make this README professional. The overview immediately communicates what the project does and who it's for — a reviewer can decide in 10 seconds whether this is relevant to them. The quick start section provides copy-paste commands that get the project running; no one should have to read source code to figure out how to start it. The API examples with curl commands let someone test the backend without a frontend. The limitations section demonstrates that you understand the system's boundaries. The future enhancements section shows direction.
 
-One critical detail: include a `.env.example` file in your repository that lists all required environment variables with placeholder values. Never commit actual secrets. The `.env.example` serves as documentation for what configuration is needed.
+One critical detail: include a `.env.example` file in your repository that lists all required environment variables with placeholder values. Never commit actual secrets.
 
 ## Architecture Decision Records
 
-An Architecture Decision Record (ADR) documents a significant technical decision: what was decided, why, what alternatives were considered, and what the consequences are. ADRs are invaluable because they capture the reasoning behind choices that may seem arbitrary months later. "Why did we use ChromaDB instead of Pinecone?" Without an ADR, the answer is lost when the person who made the decision moves on.
+An Architecture Decision Record (ADR) documents a significant technical decision: what was decided, why, what alternatives were considered, and what the consequences are. ADRs capture the reasoning behind choices that may seem arbitrary months later.
 
 Here is the ADR format:
 
@@ -189,7 +191,7 @@ Use ChromaDB for local development and initial production.
 - FAISS: No persistent storage out of the box
 ```
 
-For a capstone project, 2–3 ADRs covering your most important decisions are sufficient. Good candidates include your choice of vector database, your memory management strategy (why sliding window vs. summarisation vs. retrieval-based), your deployment platform, and your model selection. Each ADR should be a separate file in a `docs/adr/` directory.
+For the capstone project, write 2–3 ADRs covering your most important decisions. Good candidates include your choice of vector database, your memory management strategy (why sliding window vs. summarisation vs. retrieval-based), your deployment platform, and your model selection. Each ADR should be a separate file in a `docs/adr/` directory.
 
 The key to a useful ADR is the "Alternatives Considered" section. It shows that the decision was deliberate — you evaluated options and chose the best fit for your constraints, not just the first thing you found in a tutorial.
 
@@ -198,22 +200,20 @@ The key to a useful ADR is the "Alternatives Considered" section. It shows that 
 Beyond the README and ADRs, a system design document provides a comprehensive technical specification. For a capstone project, this can be a single document covering the following sections:
 
 1. **Overview** — a high-level description of the system's purpose and scope.
-2. **Goals and Non-Goals** — what the system does and, equally importantly, what it deliberately does not do. Non-goals prevent scope creep and set expectations.
-3. **Architecture Diagram** — the visual representation from the architecture review section.
+2. **Goals and Non-Goals** — what the system does and, equally importantly, what it deliberately does not do.
+3. **Architecture Diagram** — the visual representation from the architecture review.
 4. **Components** — a detailed description of each component: its responsibility, inputs, outputs, and key implementation details.
 5. **Data Flow** — how a request flows through the system from the user's message to the final response.
-6. **API Specification** — endpoints, request/response formats, error codes. The Swagger documentation generated by FastAPI covers this automatically.
+6. **API Specification** — endpoints, request/response formats, error codes.
 7. **Data Models** — database schemas, data structures, and the relationships between them.
 8. **Scalability** — how the system scales horizontally, what the bottlenecks are, and what the plan is for addressing them.
 9. **Security** — authentication, authorisation, data protection, and content moderation.
 10. **Monitoring** — logging strategy, metrics collected, alert conditions.
 11. **Trade-offs** — design decisions and their rationale, linking to the relevant ADRs.
 
-Professional projects accumulate dozens of ADRs and maintain a living system design document that evolves as the system grows. For a capstone, the README plus 2–3 ADRs plus a brief system design document demonstrates the kind of documentation discipline that distinguishes production engineers from prototype builders.
-
 ## Code Quality Standards
 
-Documentation extends to the code itself. Well-written code is self-documenting to a degree, but it still needs structure, naming conventions, and annotations to be maintainable.
+Well-written code is self-documenting to a degree, but it still needs structure, naming conventions, and annotations to be maintainable.
 
 **Code organisation** matters more than most developers realise. Each component should live in its own module: separate files for RAG, memory, LLM integration, and API endpoints. Clear naming — `get_user_conversation()` not `func1()` — makes the code readable without comments. Avoid duplication: if you find the same logic in two places, extract it into a shared function.
 
@@ -281,4 +281,74 @@ def retrieve_relevant_documents(
         raise VectorDBError("Unable to retrieve documents") from e
 ```
 
-This function demonstrates type hints on all parameters and the return value, a docstring that documents the purpose, arguments, return value, and exceptions, input validation that catches invalid arguments early with clear error messages, structured logging that records operational data without exposing sensitive content, and specific exception handling that wraps low-level errors in domain-appropriate exceptions. Before submitting your capstone, spend time on this kind of cleanup. Run a linter (pylint or flake8) to catch formatting issues. Remove debug print statements. Add missing type hints and docstrings. This polish takes 30 minutes but dramatically improves the reviewer's impression of your work.
+This function demonstrates type hints on all parameters and the return value, a docstring that documents the purpose, arguments, return value, and exceptions, input validation that catches invalid arguments early with clear error messages, structured logging that records operational data without exposing sensitive content, and specific exception handling that wraps low-level errors in domain-appropriate exceptions. Before submitting your capstone, spend time on this kind of cleanup. Run a linter (pylint or flake8) to catch formatting issues. Remove debug print statements. Add missing type hints and docstrings.
+
+## Submission Checklist
+
+Use this checklist as a final quality gate. Each item should be verifiable.
+
+**Code and Deployment:**
+- GitHub repository with all code, public and accessible
+- README.md with setup instructions, usage examples, and API documentation
+- `.env.example` with all required environment variables listed (no actual secrets)
+- `requirements.txt` or `package.json` with pinned dependency versions
+- Dockerfile and docker-compose.yml for containerised deployment
+- Deployed application with a public URL
+- Health check endpoint responding at `/health`
+
+**Documentation:**
+- Architecture diagram included as an image in the README
+- API documentation available via Swagger/OpenAPI at `/docs`
+- User guide or usage instructions in the README
+- At least 2 Architecture Decision Records for key technical choices
+- Comments in complex code sections explaining non-obvious logic
+
+**Testing:**
+- Test cases for core functionality (chat endpoint, RAG retrieval, memory management)
+- Test data or example conversations that demonstrate the chatbot's capabilities
+- Performance benchmarks documented (latency p50/p95, throughput)
+
+**Metrics and Results:**
+- Performance metrics (latency, throughput) measured and documented
+- Cost analysis with per-conversation and monthly estimates
+- Quality metrics if available (retrieval accuracy, user satisfaction scores)
+
+**Optional (strengthens the project):**
+- User testing feedback from real or simulated users
+- A/B test results comparing prompt versions or model configurations
+- Video demo or tutorial walkthrough (5–10 minutes)
+- Load testing results
+
+## Exercise: Final Integration Workshop
+
+Work through this exercise systematically in three phases.
+
+**Phase 1: Integration (30 minutes).** Ensure all components work together in the deployed environment. Test the end-to-end flow: send a message through the frontend, verify it reaches the backend API, confirm the RAG engine retrieves relevant documents, check that the LLM generates a grounded response, and verify the response appears in the frontend. Fix any broken connections. Verify that the deployed version behaves identically to the local version — environment differences (missing variables, different URLs, network configuration) are the most common source of discrepancies.
+
+**Phase 2: Documentation (30 minutes).** Complete the README following the template above. Add API examples with curl commands. Create or refine the architecture diagram. Write 1–2 ADRs for your most important technical decisions.
+
+**Phase 3: Polish (20 minutes).** Clean up the codebase: remove debug print statements, add missing type hints and docstrings, run a formatter (Black for Python) to ensure consistent style, and verify that error messages are helpful rather than cryptic. Test edge cases: empty messages, very long messages, gibberish input, and off-topic questions. Each should produce a reasonable, non-crashing response.
+
+## Project Checkpoint 8: Complete Capstone
+
+Your capstone project should now be complete and ready for submission.
+
+Deliverables:
+
+- All components integrated and working end-to-end
+- Deployed to a cloud provider with a public URL
+- README with setup instructions, usage examples, and architecture diagram
+- At least 2 ADRs documenting key technical decisions
+- Performance metrics measured and documented
+- Code cleaned up, formatted, and linted
+- Submission checklist completed
+
+## Additional Resources
+
+- [arXiv](https://arxiv.org/) — Preprint server for AI/ML research papers
+- [OpenAI Blog](https://openai.com/blog) — Updates on models, APIs, and best practices
+- [Anthropic Blog](https://www.anthropic.com/blog) — Research and engineering insights
+- [Hugging Face Blog](https://huggingface.co/blog) — Open-source model releases and tutorials
+- [Fast.ai](https://www.fast.ai/) — Practical deep learning courses
+- [DeepLearning.AI](https://www.deeplearning.ai/) — Specialised AI/ML courses
+- ["Building LLM Applications for Production"](https://huyenchip.com/2023/04/11/llm-engineering.html) by Chip Huyen — Practical LLM production engineering
