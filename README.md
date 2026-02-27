@@ -106,7 +106,7 @@ Production prompt engineering patterns. Content moderation and safety (OpenAI Mo
 ### Module 8: Capstone Project Integration
 **Duration:** 2.5 hours
 
-Reference architecture and integration checklist. Troubleshooting common integration failures. Systematic debugging and testing scenarios. Professional documentation (README, Architecture Decision Records). Code quality standards. Final deliverables and submission.
+Capstone project brief: goal, objectives, and four-phase methodology. Experiments evaluating retrieval quality, response accuracy, robustness, and performance. Results reporting and structured reflection. Documentation standards (README, Architecture Decision Records). Code quality and submission checklist.
 
 ## Course Outcomes
 
