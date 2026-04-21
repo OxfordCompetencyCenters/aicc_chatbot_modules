@@ -38,6 +38,7 @@ The structure below covers these questions:
 
 **Tech Stack:**
 - Language: Python 3.10
+- Web UI: Streamlit (local browser app)
 - Vector DB: ChromaDB (local, persistent)
 - LLM: OpenAI GPT-3.5-turbo (or equivalent chat model)
 - Embeddings: `text-embedding-3-small` (or sentence-transformers)
@@ -76,29 +77,36 @@ cp .env.example .env
 python -m chatbot.ingest --source data/documents
 
 5. Run the chatbot:
-python -m chatbot.cli
-# or open the Jupyter notebook:
-jupyter notebook capstone.ipynb
+streamlit run app.py
+# then open http://localhost:8501 in your browser
 
 ## Usage
 
-### CLI example
+Once `streamlit run app.py` is running, open the URL it prints (usually `http://localhost:8501`). You should see:
 
-$ python -m chatbot.cli
-You: What is the refund policy?
-Bot: Refunds are available within 30 days of purchase, provided the item
-     is unused. [source: returns-policy.md]
-You: And for digital products?
-Bot: Digital products are non-refundable once downloaded. [source: returns-policy.md]
+- A chat input at the bottom of the page.
+- Previous messages rendered as a conversation above the input.
+- A sidebar with a "Reset conversation" button and any configuration toggles (e.g. show retrieved sources).
 
-### Programmatic example
+### Example session
 
-from chatbot import Chatbot
+    You: What is the refund policy?
+    Assistant: Refunds are available within 30 days of purchase, provided the item
+               is unused.
+               Sources: returns-policy.md
 
-bot = Chatbot()
-reply = bot.chat("What is the refund policy?")
-print(reply.text)
-print(reply.sources)
+    You: And for digital products?
+    Assistant: Digital products are non-refundable once downloaded.
+               Sources: returns-policy.md
+
+### Programmatic example (for tests)
+
+    from chatbot import Chatbot
+
+    bot = Chatbot()
+    reply = bot.chat("What is the refund policy?")
+    print(reply.text)
+    print(reply.sources)
 
 ## Configuration
 
@@ -110,9 +118,10 @@ print(reply.sources)
 - SUMMARY_THRESHOLD: Number of turns before older history is summarised (default: 10)
 
 ## Project Structure
+├── app.py                   # Streamlit entry point
 ├── chatbot/
 │   ├── __init__.py
-│   ├── cli.py               # CLI entry point
+│   ├── core.py              # Chatbot orchestration (called from app.py)
 │   ├── rag.py               # RAG over ChromaDB
 │   ├── memory.py            # Memory with auto-summarisation
 │   ├── llm.py               # OpenAI client wrapper
@@ -120,7 +129,6 @@ print(reply.sources)
 ├── data/
 │   └── documents/           # Source documents
 ├── tests/                   # Unit tests
-├── capstone.ipynb           # Notebook walkthrough (optional)
 ├── requirements.txt
 ├── .env.example
 └── README.md
@@ -136,10 +144,10 @@ pytest tests/
 ## Limitations
 - Only supports English language
 - Document ingestion limited to text and PDF
-- Runs locally — no multi-user web deployment
+- Runs locally on a single machine — no multi-user hosting
 ```
 
-The overview communicates what the project does and who it's for. The quick start provides copy-paste commands to get the project running. The CLI example lets someone see the chatbot in action without running it themselves. The limitations section demonstrates understanding of the system's boundaries.
+The overview communicates what the project does and who it's for. The quick start provides copy-paste commands to get the project running. The example session lets a reader see the chatbot's behaviour without running it themselves. The limitations section demonstrates understanding of the system's boundaries.
 
 Include a `.env.example` file in your repository listing all required environment variables with placeholder values. Never commit actual secrets.
 
@@ -261,7 +269,7 @@ Use this checklist as a final quality gate.
 - `.env.example` with all required environment variables listed (no actual secrets)
 - `requirements.txt` with pinned dependency versions
 - Ingestion script that populates ChromaDB from the document corpus
-- CLI or notebook entry point that runs the full chat loop
+- `app.py` Streamlit entry point that runs the full chat loop in the browser
 
 **Documentation:**
 - Architecture diagram included in the README
@@ -284,13 +292,13 @@ Use this checklist as a final quality gate.
 **Optional (strengthens the project):**
 - User testing feedback from real or simulated users
 - Ablation comparing different chunk sizes or summarisation thresholds
-- Video demo or notebook walkthrough (5–10 minutes)
+- Video demo of the Streamlit app in use (5–10 minutes)
 
 ## Exercise: Final Integration and Evaluation
 
 Work through this exercise in four phases.
 
-**Phase 1: Integration Testing (20 minutes).** Verify the end-to-end flow locally. Send a message through the CLI or notebook, confirm RAG retrieval over ChromaDB and LLM generation work correctly, and verify the response appears with source citations. Test that conversation memory persists across turns within a session and that auto-summarisation kicks in once the configured threshold is crossed. Fix any broken connections.
+**Phase 1: Integration Testing (20 minutes).** Start the Streamlit app with `streamlit run app.py` and verify the end-to-end flow locally. Send a message through the chat input, confirm RAG retrieval over ChromaDB and LLM generation work correctly, and verify the response appears with source citations. Test that conversation memory persists across reruns (Streamlit re-executes the script on every interaction — session state must survive) and that auto-summarisation kicks in once the configured threshold is crossed. Fix any broken connections.
 
 **Phase 2: Run Experiments (30 minutes).** Execute the experiments defined in the project brief. Run your 5–10 test queries through the system and record retrieval hit rates and response quality ratings. Test the robustness scenarios (empty input, gibberish, off-topic, very long input). Record the average latency across those same queries. Run a 20-turn conversation and confirm token counts stay within the model's context window.
 

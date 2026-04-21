@@ -13,6 +13,9 @@ tiktoken~=0.8
 # Vector database (used from Module 2 onwards)
 chromadb~=0.5
 
+# Web UI for the capstone (Module 8)
+streamlit~=1.38
+
 # Data utilities
 pandas~=2.2
 numpy~=1.26

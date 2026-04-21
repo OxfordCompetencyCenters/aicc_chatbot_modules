@@ -21,7 +21,7 @@ The capstone project is a structured engineering project, not a tutorial exercis
 
 ## Project Goal
 
-Build a **domain-specific chatbot** that retrieves information from a curated document corpus, maintains conversation context across turns using auto-summarisation, and runs end-to-end locally as a Python application.
+Build a **domain-specific chatbot** that retrieves information from a curated document corpus, maintains conversation context across turns using auto-summarisation, and runs end-to-end locally as a Streamlit application that users open in a browser.
 
 The emphasis on "domain-specific" is deliberate. A generic chatbot that wraps an LLM API adds little value — users can already access ChatGPT or Claude directly. A domain-specific chatbot adds value by grounding its responses in a particular corpus of documents that the base LLM does not have access to, applying domain-appropriate constraints (what to answer, what to refuse, how to handle ambiguity), and serving a defined audience with specific information needs.
 
@@ -37,7 +37,7 @@ The capstone must satisfy the following objectives. Each is testable — you sho
 
 2. **Conversation memory with auto-summarisation.** The chatbot maintains context across multiple turns within a conversation. A follow-up question like "tell me more about that" correctly refers to the previous response. When the conversation grows beyond a configured threshold, older turns are automatically summarised so the chatbot continues to operate within the model's context window.
 
-3. **Runnable Python application.** The chatbot runs end-to-end as a local Python application — either a CLI script or a Jupyter notebook. No web frontend, containerisation, or cloud deployment is required.
+3. **Streamlit chat application.** The chatbot runs as a local Streamlit app launched with `streamlit run app.py`. Users interact via a browser: they type messages into a chat input, see the assistant's replies alongside the retrieved source documents, and can reset the session. No containerisation or cloud deployment is required — the app is run locally on the participant's own machine or server.
 
 4. **Documentation.** The project includes a README with setup instructions and usage examples, and at least one Architecture Decision Record for a key technical choice (e.g. ChromaDB as the vector store, or the summarisation strategy).
 
@@ -59,8 +59,8 @@ The system has three core components arranged around the LLM:
 
 ```
                 ┌────────────────────────┐
-                │     User (CLI /        │
-                │      Notebook)         │
+                │   Streamlit UI         │
+                │   (browser chat)       │
                 └───────────┬────────────┘
                             │ message
                             ▼
@@ -85,17 +85,18 @@ The system has three core components arranged around the LLM:
                     └────────────────────────┘
 ```
 
-The **chatbot core** orchestrates each turn. The **RAG engine** owns the ChromaDB collection — ingestion, embedding generation, and similarity search. The **memory manager** owns the conversation history and the summarisation policy: recent turns are kept verbatim, older turns are collapsed into a rolling summary when a configurable turn or token threshold is exceeded. The LLM receives a prompt built from the system instructions, the memory-manager output, the retrieved document chunks, and the new user message.
+The **Streamlit UI** is the entry point — `st.chat_input` captures each user message and `st.chat_message` renders both the user turn and the assistant's reply (with source references). Session state holds the conversation history between reruns. The **chatbot core** orchestrates each turn. The **RAG engine** owns the ChromaDB collection — ingestion, embedding generation, and similarity search. The **memory manager** owns the conversation history and the summarisation policy: recent turns are kept verbatim, older turns are collapsed into a rolling summary when a configurable turn or token threshold is exceeded. The LLM receives a prompt built from the system instructions, the memory-manager output, the retrieved document chunks, and the new user message.
 
 ### Integration Checklist
 
 Use this checklist as a quality gate to verify completeness before you start the experiments.
 
 **Core Functionality:**
-- The chatbot entry point (CLI or notebook) accepts a user message and returns a response.
+- `streamlit run app.py` launches the chatbot in a browser.
+- The chat input accepts a user message and the assistant's reply renders in the conversation, with visible source references.
 - RAG retrieval fetches relevant documents from ChromaDB for a given query.
-- LLM generation creates responses grounded in the retrieved context, with visible source references.
-- Conversation history is maintained across turns in the same session.
+- LLM generation creates responses grounded in the retrieved context.
+- Conversation history persists across reruns via `st.session_state`, and a "Reset conversation" control clears it.
 - API keys are loaded from environment variables (e.g. via `python-dotenv`), not hardcoded.
 
 **Data Flow:**

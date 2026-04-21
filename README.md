@@ -125,7 +125,7 @@ Production prompt engineering patterns. Content moderation and safety (OpenAI Mo
 ### Module 8: Capstone Project Integration
 **Duration:** 2.5 hours
 
-Capstone project brief: build a domain-specific chatbot that combines RAG over a ChromaDB vector store with conversation memory and auto-summarisation. Runs locally as a Python application. Experiments evaluating retrieval quality and response quality. Results reporting and structured reflection. Documentation standards (README, Architecture Decision Records). Code quality and submission checklist.
+Capstone project brief: build a domain-specific chatbot that combines RAG over a ChromaDB vector store with conversation memory and auto-summarisation. Runs locally as a Streamlit application that participants launch with `streamlit run app.py`. Experiments evaluating retrieval quality and response quality. Results reporting and structured reflection. Documentation standards (README, Architecture Decision Records). Code quality and submission checklist.
 
 ## Course Outcomes
 
