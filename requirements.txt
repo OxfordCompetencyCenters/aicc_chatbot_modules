@@ -1,0 +1,27 @@
+# Chatbot Development Course - core environment
+# Tested with Python 3.10+
+# Install with: pip install -r requirements.txt
+
+# Jupyter
+jupyterlab~=4.2
+ipykernel~=6.29
+
+# LLM + tokenisation
+openai~=1.55
+tiktoken~=0.8
+
+# Vector database (used from Module 2 onwards)
+chromadb~=0.5
+
+# Data utilities
+pandas~=2.2
+numpy~=1.26
+
+# Environment + config
+python-dotenv~=1.0
+
+# Optional extras (uncomment if a module asks for them)
+# sentence-transformers pulls in torch (~2 GB). Enable only if a module
+# asks you to run embeddings locally instead of via the OpenAI API.
+# sentence-transformers~=3.0
+# langchain~=0.3

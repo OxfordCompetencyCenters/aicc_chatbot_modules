@@ -43,28 +43,50 @@ Hands-on training in building production-ready chatbots using Large Language Mod
 
 ### Core Python Dependencies
 
+All dependencies are pinned in [`requirements.txt`](./requirements.txt). The core set covers Modules 1–4:
+
 | Package | Purpose |
 |---------|---------|
+| `jupyterlab` | Notebook interface for exercises |
 | `openai` | OpenAI API client for GPT models |
 | `tiktoken` | Token counting and management |
 | `chromadb` | Local vector database for RAG |
-| `sentence-transformers` | Embedding models for semantic search |
-| `langchain` | LLM application framework |
-| `pandas` | Data manipulation and analysis |
+| `pandas` / `numpy` | Data manipulation and analysis |
 | `python-dotenv` | Environment variable management |
 
-Additional packages (FastAPI, Streamlit, Redis, Docker, etc.) are introduced in later modules as needed.
+Optional extras (`sentence-transformers`, `langchain`) are listed but commented out in `requirements.txt` — uncomment if a module you are working through asks for them.
 
 ## Pre-Course Setup
 
-Complete the following before the first session:
+Complete the following before the first session. The goal is that by the end of this setup, [`00-environment-check.ipynb`](./00-environment-check.ipynb) runs top to bottom with every cell printing `OK:`.
 
-1. Install Python 3.9+ and verify: `python --version`
-2. Create and activate a virtual environment
-3. Register for OpenAI API and generate an API key ([Oxford API access](https://oerc.ox.ac.uk/ai-centre/generative-ai-tools/api-access))
-4. Set the `OPENAI_API_KEY` environment variable
-5. Install core packages: `pip install openai tiktoken python-dotenv`
-6. Clone this repository: `git clone https://github.com/OxfordCompetencyCenters/aicc_chatbot_modules.git`
+1. **Install Python 3.10+** and verify: `python --version`.
+2. **Clone this repository:**
+   ```
+   git clone https://github.com/OxfordCompetencyCenters/aicc_chatbot_modules.git
+   cd aicc_chatbot_modules
+   ```
+3. **Create and activate a virtual environment:**
+   ```
+   python -m venv .venv
+   source .venv/bin/activate          # macOS / Linux
+   .venv\Scripts\activate             # Windows PowerShell
+   ```
+4. **Install the pinned dependencies** — this is the only install command you should need for the core modules:
+   ```
+   pip install -r requirements.txt
+   ```
+5. **Register for an OpenAI API key** via [Oxford API access](https://oerc.ox.ac.uk/ai-centre/generative-ai-tools/api-access).
+6. **Configure your key:** copy the example file and paste your real key into the copy.
+   ```
+   cp .env.example .env
+   # then edit .env and replace sk-replace-me with your actual key
+   ```
+7. **Run the environment check** to confirm everything works:
+   ```
+   jupyter lab 00-environment-check.ipynb
+   ```
+   Execute every cell. If they all print `OK:`, you are ready for Module 1. If any cell fails, the notebook's final section explains the likely cause.
 
 ## Module Overview
 
