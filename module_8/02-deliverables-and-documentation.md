@@ -6,7 +6,7 @@ tags: [chatbots, documentation, architecture-decision-records, code-quality, cap
 learningOutcomes:
   - Write a professional README that enables someone to understand, install, and use the project in under 15 minutes.
   - Create Architecture Decision Records that document the rationale behind key technical choices.
-  - Apply code quality standards including type hints, docstrings, input validation, and structured logging.
+  - Apply code quality standards including type hints, docstrings, and input validation.
   - Compile and verify a complete set of capstone deliverables covering code, documentation, experimentation, and results.
 ---
 
@@ -14,7 +14,7 @@ learningOutcomes:
 
 - Write a professional README that enables someone to understand, install, and use the project in under 15 minutes.
 - Create Architecture Decision Records that document the rationale behind key technical choices.
-- Apply code quality standards including type hints, docstrings, input validation, and structured logging.
+- Apply code quality standards including type hints, docstrings, and input validation.
 - Compile and verify a complete set of capstone deliverables covering code, documentation, experimentation, and results.
 
 Documentation is how you communicate your project's goal, methodology, results, and conclusions to others. A working chatbot with no documentation is a black box — no one can run it, evaluate it, or build on it. This section covers the documentation standards your capstone should meet, the code quality expectations, and the final submission checklist.
@@ -33,32 +33,28 @@ The structure below covers these questions:
 
 **Key Features:**
 - RAG-powered knowledge retrieval from [domain] documents
-- Conversation memory with context management
-- Real-time response streaming
-- Analytics dashboard for monitoring
+- Conversation memory with auto-summarisation for long sessions
+- Source citations for every answer
 
 **Tech Stack:**
-- Backend: FastAPI, Python 3.10
-- Frontend: Streamlit / React
-- Vector DB: ChromaDB
-- LLM: OpenAI GPT-3.5-turbo
-- Deployment: Docker, Google Cloud Run
+- Language: Python 3.10
+- Vector DB: ChromaDB (local, persistent)
+- LLM: OpenAI GPT-3.5-turbo (or equivalent chat model)
+- Embeddings: `text-embedding-3-small` (or sentence-transformers)
 
 ## Architecture
 
 [Include your architecture diagram here]
 
 **Core Components:**
-- **RAG Engine:** Retrieves relevant documents using semantic search
-- **Memory Manager:** Maintains conversation history with summarisation
-- **Analytics:** Tracks engagement, performance, and costs
-- **API:** RESTful endpoints for chat, history, and admin functions
+- **Chatbot Core:** Orchestrates each turn — assembles the prompt and calls the LLM.
+- **RAG Engine:** Ingests the document corpus into ChromaDB and retrieves relevant chunks at query time.
+- **Memory Manager:** Maintains conversation history and automatically summarises older turns once a configured threshold is exceeded.
 
 ## Quick Start
 
 ### Prerequisites
 - Python 3.10+
-- Docker and Docker Compose
 - OpenAI API key
 
 ### Installation
@@ -67,28 +63,42 @@ The structure below covers these questions:
 git clone https://github.com/yourusername/your-chatbot.git
 cd your-chatbot
 
-2. Set up environment variables:
+2. Create a virtual environment and install dependencies:
+python -m venv .venv
+source .venv/bin/activate  # or .venv\Scripts\activate on Windows
+pip install -r requirements.txt
+
+3. Set up environment variables:
 cp .env.example .env
 # Edit .env and add your OPENAI_API_KEY
 
-3. Run with Docker Compose:
-docker-compose up --build
+4. Ingest the document corpus into ChromaDB:
+python -m chatbot.ingest --source data/documents
 
-4. Access the application:
-- Frontend: http://localhost:3000
-- API Docs: http://localhost:8000/docs
+5. Run the chatbot:
+python -m chatbot.cli
+# or open the Jupyter notebook:
+jupyter notebook capstone.ipynb
 
 ## Usage
 
-### API Endpoints
+### CLI example
 
-**POST /chat**
-curl -X POST "http://localhost:8000/chat" \
-  -H "Content-Type: application/json" \
-  -d '{"message": "What is Python?", "user_id": "user123"}'
+$ python -m chatbot.cli
+You: What is the refund policy?
+Bot: Refunds are available within 30 days of purchase, provided the item
+     is unused. [source: returns-policy.md]
+You: And for digital products?
+Bot: Digital products are non-refundable once downloaded. [source: returns-policy.md]
 
-**GET /metrics**
-curl "http://localhost:8000/metrics"
+### Programmatic example
+
+from chatbot import Chatbot
+
+bot = Chatbot()
+reply = bot.chat("What is the refund policy?")
+print(reply.text)
+print(reply.sources)
 
 ## Configuration
 
@@ -96,41 +106,40 @@ curl "http://localhost:8000/metrics"
 - OPENAI_API_KEY: Your OpenAI API key (required)
 - MODEL_NAME: LLM model to use (default: gpt-3.5-turbo)
 - MAX_TOKENS: Max response length (default: 500)
-- VECTOR_DB_PATH: Path to ChromaDB storage
+- CHROMA_DB_PATH: Path to the local ChromaDB persistence directory
+- SUMMARY_THRESHOLD: Number of turns before older history is summarised (default: 10)
 
 ## Project Structure
-├── backend/
-│   ├── main.py              # FastAPI application
-│   ├── chatbot/
-│   │   ├── rag.py           # RAG implementation
-│   │   ├── memory.py        # Memory management
-│   │   └── llm.py           # LLM integration
-│   ├── tests/               # Unit tests
-│   └── requirements.txt
-├── frontend/
-│   └── app.py               # Streamlit app
+├── chatbot/
+│   ├── __init__.py
+│   ├── cli.py               # CLI entry point
+│   ├── rag.py               # RAG over ChromaDB
+│   ├── memory.py            # Memory with auto-summarisation
+│   ├── llm.py               # OpenAI client wrapper
+│   └── ingest.py            # Corpus ingestion script
 ├── data/
 │   └── documents/           # Source documents
-├── docker-compose.yml
+├── tests/                   # Unit tests
+├── capstone.ipynb           # Notebook walkthrough (optional)
+├── requirements.txt
+├── .env.example
 └── README.md
 
 ## Running Tests
-cd backend
 pytest tests/
 
 ## Performance
 - Response Time: p95 < 3 seconds
-- Throughput: Handles 100 concurrent users
 - Cost: ~$0.002 per conversation (average)
+- 50-turn conversations stay within the model's context window via auto-summarisation
 
 ## Limitations
 - Only supports English language
-- Maximum conversation length: 50 turns
 - Document ingestion limited to text and PDF
-- Rate limited to 10 requests/minute per user
+- Runs locally — no multi-user web deployment
 ```
 
-The overview communicates what the project does and who it's for. The quick start provides copy-paste commands to get the project running. The API examples with curl commands let someone test the backend without a frontend. The limitations section demonstrates understanding of the system's boundaries.
+The overview communicates what the project does and who it's for. The quick start provides copy-paste commands to get the project running. The CLI example lets someone see the chatbot in action without running it themselves. The limitations section demonstrates understanding of the system's boundaries.
 
 Include a `.env.example` file in your repository listing all required environment variables with placeholder values. Never commit actual secrets.
 
@@ -168,7 +177,7 @@ Use ChromaDB for local development and initial production.
 - FAISS: No persistent storage out of the box
 ```
 
-Write 2–3 ADRs for your most important decisions. Good candidates: vector database choice, memory management strategy, deployment platform, model selection. Place them in a `docs/adr/` directory.
+Write at least one ADR for a significant decision — two or three is ideal. Good candidates: vector database choice (ChromaDB), summarisation strategy (when to trigger, what to keep verbatim, what to collapse), chunk size and retrieval top-k, embedding model selection. Place them in a `docs/adr/` directory.
 
 The key to a useful ADR is the "Alternatives Considered" section. It shows the decision was deliberate — you evaluated options and chose the best fit for your constraints.
 
@@ -180,12 +189,12 @@ Each component should live in its own module: separate files for RAG, memory, LL
 
 - No hardcoded secrets (API keys, passwords) anywhere in the codebase
 - No commented-out code (use git history to recover old code)
-- Consistent formatting (use Black for Python, Prettier for JavaScript)
-- Error handling for all external calls (API, database, file system)
-- Logging for important operations
+- Consistent formatting (use Black for Python)
+- Error handling for all external calls (OpenAI API, ChromaDB, file system)
+- Basic logging for key operations (ingestion, retrieval, summarisation events)
 - Type hints for function signatures
 - Docstrings for public functions
-- No debug print statements in production code
+- No debug print statements in submitted code
 
 The following example demonstrates production-quality Python code:
 
@@ -246,28 +255,26 @@ This demonstrates type hints, a complete docstring, input validation, structured
 
 Use this checklist as a final quality gate.
 
-**Code and Deployment:**
+**Code:**
 - GitHub repository with all code, public and accessible
-- README.md with setup instructions, usage examples, and API documentation
+- README.md with setup instructions and usage examples
 - `.env.example` with all required environment variables listed (no actual secrets)
-- `requirements.txt` or `package.json` with pinned dependency versions
-- Dockerfile and docker-compose.yml for containerised deployment
-- Deployed application with a public URL
-- Health check endpoint responding at `/health`
+- `requirements.txt` with pinned dependency versions
+- Ingestion script that populates ChromaDB from the document corpus
+- CLI or notebook entry point that runs the full chat loop
 
 **Documentation:**
 - Architecture diagram included in the README
-- API documentation available via Swagger/OpenAPI at `/docs`
-- At least 2 Architecture Decision Records for key technical choices
+- At least 1 Architecture Decision Record for a key technical choice (2–3 is ideal)
 - Project goal, objectives, and methodology documented
 
 **Experimentation and Results:**
 - Retrieval quality evaluated against a set of test queries with known answers
 - Response quality assessed (correct, partially correct, incorrect)
-- Robustness tested across edge cases (empty input, gibberish, off-topic, adversarial)
-- Performance benchmarks documented (latency p50/p95, cost per conversation)
+- Robustness tested across edge cases (empty input, long input, gibberish, off-topic)
+- Performance benchmarks documented (latency p50/p95, 50-turn conversation stays within context)
 - Results presented in tables with quantitative metrics
-- Baseline comparison included where applicable
+- Baseline comparison included where applicable (e.g. with / without RAG, with / without auto-summarisation)
 
 **Reflection:**
 - Conclusion documenting what worked, what didn't, and key challenges
@@ -276,17 +283,16 @@ Use this checklist as a final quality gate.
 
 **Optional (strengthens the project):**
 - User testing feedback from real or simulated users
-- A/B test results comparing prompt versions or model configurations
-- Video demo or tutorial walkthrough (5–10 minutes)
-- Load testing results under concurrent traffic
+- Ablation comparing different chunk sizes or summarisation thresholds
+- Video demo or notebook walkthrough (5–10 minutes)
 
 ## Exercise: Final Integration and Evaluation
 
 Work through this exercise in four phases.
 
-**Phase 1: Integration Testing (20 minutes).** Verify the end-to-end flow in the deployed environment. Send a message through the frontend, confirm RAG retrieval and LLM generation work correctly, and verify the response appears with source citations. Test that conversation memory persists across turns. Fix any broken connections. Verify the deployed version matches local behaviour.
+**Phase 1: Integration Testing (20 minutes).** Verify the end-to-end flow locally. Send a message through the CLI or notebook, confirm RAG retrieval over ChromaDB and LLM generation work correctly, and verify the response appears with source citations. Test that conversation memory persists across turns within a session and that auto-summarisation kicks in once the configured threshold is crossed. Fix any broken connections.
 
-**Phase 2: Run Experiments (30 minutes).** Execute the experiments defined in the project brief. Run your test queries through the system and record retrieval hit rates and response quality ratings. Test the robustness scenarios (empty input, gibberish, off-topic, adversarial). Measure latency across 20+ requests and compute p50/p95. Calculate cost per conversation.
+**Phase 2: Run Experiments (30 minutes).** Execute the experiments defined in the project brief. Run your test queries through the system and record retrieval hit rates and response quality ratings. Test the robustness scenarios (empty input, gibberish, off-topic, very long input). Measure latency across 20+ requests and compute p50/p95. Run a 50-turn conversation and confirm token counts stay within the model's context window.
 
 **Phase 3: Document Results (20 minutes).** Compile your experimental results into the tables described in the project brief. Write the conclusion: what worked, what didn't, key challenges, lessons learned, and future improvements. Add the results to your project documentation.
 
@@ -298,10 +304,9 @@ Your capstone project should now be complete.
 
 Deliverables:
 
-- All components integrated and working end-to-end
-- Deployed to a cloud provider with a public URL
+- All components integrated and working end-to-end locally
 - README with project overview, setup instructions, and architecture diagram
-- At least 2 ADRs documenting key technical decisions
+- At least 1 ADR documenting a key technical decision (2–3 is ideal)
 - Experimental results documented with quantitative metrics
 - Conclusion with reflection on what worked, what didn't, and future improvements
 - Code cleaned up, formatted, and linted

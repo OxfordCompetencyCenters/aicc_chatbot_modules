@@ -2,7 +2,7 @@
 
 Hands-on training in building production-ready chatbots using Large Language Models (LLMs). Participants progress from fundamental concepts through advanced techniques including Retrieval-Augmented Generation (RAG), memory management, deployment, analytics, and production hardening.
 
-**Duration:** 20–25 hours across 8 modules
+**Duration:** 20 hours across 8 modules
 **Level:** Intermediate
 **Delivery:** One module per week over 8 weeks
 
@@ -69,32 +69,32 @@ Complete the following before the first session:
 ## Module Overview
 
 ### Module 1: Chatbot Foundations & API Integration
-**Duration:** 3 hours
+**Duration:** 2.5 hours
 
 Evolution from rule-based to LLM-powered chatbots. LLM fundamentals (tokens, context windows, parameters). OpenAI API integration and best practices. Stateless vs stateful chatbot design. System prompts and conversation management.
 
 ### Module 2: RAG — Vector Embeddings & Semantic Search
-**Duration:** 4 hours
+**Duration:** 2.5 hours
 
 Retrieval-Augmented Generation paradigm. Vector embeddings and semantic similarity. Document chunking strategies (fixed, semantic, recursive). Vector databases (ChromaDB, Pinecone). Building end-to-end RAG chatbots with source citations.
 
 ### Module 3: Advanced RAG & Knowledge Graph Integration
-**Duration:** 3.5 hours
+**Duration:** 2.5 hours
 
 Agentic RAG with multi-step retrieval and query expansion. Cross-encoder re-ranking for precision. Hybrid search (dense + sparse retrieval). Knowledge graphs for structured reasoning. Semantic caching for cost reduction. Retrieval quality metrics and evaluation.
 
 ### Module 4: Memory & Context Management
-**Duration:** 3.5 hours
+**Duration:** 2.5 hours
 
 Short-term vs long-term memory architectures. Conversation window management strategies. Conversation summarisation techniques. Retrieval-based memory systems. Selective memory and importance scoring. User profile building and personalisation.
 
 ### Module 5 (Optional): Deployment Architecture
-**Duration:** 3 hours
+**Duration:** 2.5 hours
 
 RESTful API design with FastAPI. Frontend development (Streamlit, React). Docker containerisation and multi-stage builds. Docker Compose for local development. Cloud deployment (Google Cloud Run). JWT authentication and secrets management.
 
 ### Module 6 (Optional): Chatbot Analytics & Observability
-**Duration:** 3.5 hours
+**Duration:** 2.5 hours
 
 User engagement metrics (DAU, retention, sessions). Conversation quality analytics. Performance monitoring (latency, cost tracking). Structured logging and distributed tracing with OpenTelemetry. A/B testing and experimentation.
 
@@ -106,7 +106,7 @@ Production prompt engineering patterns. Content moderation and safety (OpenAI Mo
 ### Module 8: Capstone Project Integration
 **Duration:** 2.5 hours
 
-Capstone project brief: goal, objectives, and four-phase methodology. Experiments evaluating retrieval quality, response accuracy, robustness, and performance. Results reporting and structured reflection. Documentation standards (README, Architecture Decision Records). Code quality and submission checklist.
+Capstone project brief: build a domain-specific chatbot that combines RAG over a ChromaDB vector store with conversation memory and auto-summarisation. Runs locally as a Python application. Experiments evaluating retrieval quality and response quality. Results reporting and structured reflection. Documentation standards (README, Architecture Decision Records). Code quality and submission checklist.
 
 ## Course Outcomes
 

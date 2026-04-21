@@ -1,27 +1,27 @@
 ---
 name: Capstone Project Brief
 dependsOn:
-  - alternative-llm-providers
-tags: [chatbots, capstone, project, architecture, evaluation]
+  - user-personalisation
+tags: [chatbots, capstone, project, rag, chromadb, memory, evaluation]
 learningOutcomes:
-  - Define a domain-specific chatbot project with a clear goal, objectives, and methodology.
-  - Build and integrate a production-ready chatbot following a phased methodology from data preparation through deployment.
-  - Design and execute experiments that evaluate retrieval quality, response accuracy, robustness, and performance.
+  - Define a domain-specific chatbot project with a clear goal and document corpus.
+  - Build an integrated chatbot combining RAG over ChromaDB with conversation memory and auto-summarisation.
+  - Design and execute experiments that evaluate retrieval quality and response quality.
   - Analyse and report results with quantitative metrics, and reflect on lessons learned.
 ---
 
 ## Learning Outcomes
 
-- Define a domain-specific chatbot project with a clear goal, objectives, and methodology.
-- Build and integrate a production-ready chatbot following a phased methodology from data preparation through deployment.
-- Design and execute experiments that evaluate retrieval quality, response accuracy, robustness, and performance.
+- Define a domain-specific chatbot project with a clear goal and document corpus.
+- Build an integrated chatbot combining RAG over ChromaDB with conversation memory and auto-summarisation.
+- Design and execute experiments that evaluate retrieval quality and response quality.
 - Analyse and report results with quantitative metrics, and reflect on lessons learned.
 
-The capstone project is a structured engineering project, not a tutorial exercise. Over Modules 1–7, you built individual components — LLM integration, RAG pipelines, memory management, deployment infrastructure, analytics, and production hardening. The capstone brings them together into a single system that solves a real information-retrieval problem for a specific audience. This section defines the project, provides a structured process for executing it, and explains how to evaluate and report your results.
+The capstone project is a structured engineering project, not a tutorial exercise. Over Modules 1, 2, and 4 you built individual components — LLM integration and chatbot fundamentals, RAG pipelines backed by a vector database, and conversation memory with summarisation. The capstone brings them together into a single system that solves a real information-retrieval problem for a specific audience. This section defines the project, provides a structured process for executing it, and explains how to evaluate and report your results.
 
 ## Project Goal
 
-Build and deploy a **domain-specific chatbot** that retrieves information from a curated document corpus, maintains conversation context across turns, and operates with production-grade reliability, safety, and observability.
+Build a **domain-specific chatbot** that retrieves information from a curated document corpus, maintains conversation context across turns using auto-summarisation, and runs end-to-end locally as a Python application.
 
 The emphasis on "domain-specific" is deliberate. A generic chatbot that wraps an LLM API adds little value — users can already access ChatGPT or Claude directly. A domain-specific chatbot adds value by grounding its responses in a particular corpus of documents that the base LLM does not have access to, applying domain-appropriate constraints (what to answer, what to refuse, how to handle ambiguity), and serving a defined audience with specific information needs.
 
@@ -33,133 +33,88 @@ Your project should identify a domain, a target audience, and a document corpus,
 
 The capstone must satisfy the following objectives. Each is testable — you should be able to demonstrate it working.
 
-1. **Retrieval-augmented generation.** The chatbot retrieves relevant documents from a vector database and grounds its responses in those documents. Responses cite or reference the source material rather than relying solely on the LLM's training data.
+1. **Retrieval-augmented generation over ChromaDB.** The chatbot ingests a document corpus into a ChromaDB vector store, retrieves relevant chunks at query time, and grounds its responses in those documents. Responses cite or reference the source material rather than relying solely on the LLM's training data.
 
-2. **Conversation memory.** The chatbot maintains context across multiple turns within a conversation. A follow-up question like "tell me more about that" correctly refers to the previous response. Memory management prevents token overflow in long conversations.
+2. **Conversation memory with auto-summarisation.** The chatbot maintains context across multiple turns within a conversation. A follow-up question like "tell me more about that" correctly refers to the previous response. When the conversation grows beyond a configured threshold, older turns are automatically summarised so the chatbot continues to operate within the model's context window.
 
-3. **Deployed web application.** The chatbot is accessible via a web interface (Streamlit or React frontend) backed by a FastAPI API, containerised with Docker, and deployed to a cloud provider with a public URL.
+3. **Runnable Python application.** The chatbot runs end-to-end as a local Python application — either a CLI script or a Jupyter notebook. No web frontend, containerisation, or cloud deployment is required.
 
-4. **Error handling and safety.** The system handles invalid inputs, API failures, and rate limiting gracefully. Content moderation filters unsafe inputs and outputs. The chatbot does not crash, hang, or return unhelpful error messages under normal or adversarial use.
-
-5. **Performance and cost tracking.** The system tracks response latency, token usage, and cost per conversation. These metrics are accessible via a metrics endpoint or dashboard.
-
-6. **Documentation.** The project includes a README with setup instructions and usage examples, architecture decision records for key technical choices, and an architecture diagram showing how components connect.
+4. **Documentation.** The project includes a README with setup instructions and usage examples, and at least one Architecture Decision Record for a key technical choice (e.g. ChromaDB as the vector store, or the summarisation strategy).
 
 ## Methodology
 
-The project follows a four-phase methodology. Each phase builds on the previous one, and the integration checklist at the end of this section serves as a quality gate to verify completeness before moving forward.
+The project follows a two-phase methodology. Each phase builds on the previous one, and the integration checklist at the end of this section serves as a quality gate to verify completeness before moving forward.
 
 ### Phase 1: Domain and Data
 
 Choose a domain and assemble a document corpus. A good domain choice has three properties: the documents are available (you can collect or access them), the questions are non-trivial (they require searching across multiple documents, not just looking up a single fact), and the audience is defined (you can describe who would use this chatbot and what they need).
 
-Prepare the corpus for RAG ingestion. Chunk documents using the strategies from Module 2 — experiment with chunk sizes (500, 1,000, 1,500 tokens) to find the best trade-off between granularity and context. Generate embeddings and store them in a vector database (ChromaDB for development, Pinecone if scale requires it). Verify that similarity search returns relevant results for a sample of test queries before proceeding to the next phase.
+Prepare the corpus for RAG ingestion. Chunk documents using the strategies from Module 2 — experiment with chunk sizes (500, 1,000, 1,500 tokens) to find the best trade-off between granularity and context. Generate embeddings and store them in a ChromaDB collection on local disk. Verify that similarity search returns relevant results for a sample of test queries before proceeding to the next phase.
 
 ### Phase 2: Core Pipeline
 
-Build the end-to-end chat flow: the user sends a message, the RAG engine retrieves relevant documents, the prompt is constructed with the retrieved context and conversation history, the LLM generates a response, and the response is returned to the user. This is the minimum viable product.
+Build the end-to-end chat flow: the user sends a message, the RAG engine retrieves relevant documents from ChromaDB, the memory manager supplies prior conversation history (summarising older turns when necessary), the prompt is constructed with the retrieved context and the conversation memory, the LLM generates a response, and the response is returned to the user.
 
-The target architecture for the complete system is shown below. Not every component is needed in Phase 2 — focus on the core pipeline (backend, RAG engine, memory manager, vector database, and LLM integration). The remaining layers are added in Phases 3 and 4.
+The system has three core components arranged around the LLM:
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                      FRONTEND LAYER                      │
-│  ┌──────────────┐         ┌──────────────┐              │
-│  │   Web UI     │         │   Mobile     │              │
-│  │  (React)     │         │    App       │              │
-│  └──────┬───────┘         └──────┬───────┘              │
-│         └────────────┬───────────┘                       │
-└──────────────────────┼───────────────────────────────────┘
-                       │ HTTPS/WSS
-┌──────────────────────┼───────────────────────────────────┐
-│                 API GATEWAY                               │
-│     (Load Balancer, Rate Limiting, Auth)                 │
-└──────────────────────┼───────────────────────────────────┘
-                       │
-┌──────────────────────┼───────────────────────────────────┐
-│                 BACKEND LAYER                             │
-│  ┌──────────────────────────────────────────────────┐    │
-│  │           FastAPI Application Servers             │    │
-│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐      │    │
-│  │  │ Server 1 │  │ Server 2 │  │ Server 3 │      │    │
-│  │  └─────┬────┘  └─────┬────┘  └─────┬────┘      │    │
-│  └────────┼─────────────┼─────────────┼────────────┘    │
-│  ┌────────┼─────────────┼─────────────┼────────────┐    │
-│  │  ┌─────▼──────┐ ┌───▼────┐  ┌────▼──────┐     │    │
-│  │  │  Chatbot   │ │  RAG   │  │  Memory   │     │    │
-│  │  │   Core     │ │ Engine │  │  Manager  │     │    │
-│  │  └────────────┘ └────────┘  └───────────┘     │    │
-│  └────────────────────────────────────────────────┘    │
-└────────────────────────────────────────────────────────┘
-                       │
-┌──────────────────────┼───────────────────────────────────┐
-│                 DATA & STORAGE LAYER                      │
-│  ┌────────────┐  ┌──────────┐  ┌──────────┐             │
-│  │ PostgreSQL │  │  Redis   │  │ ChromaDB │             │
-│  │(User Data) │  │ (Cache)  │  │(Vectors) │             │
-│  └────────────┘  └──────────┘  └──────────┘             │
-└──────────────────────────────────────────────────────────┘
-                       │
-┌──────────────────────┼───────────────────────────────────┐
-│                 EXTERNAL SERVICES                         │
-│  ┌────────────┐  ┌──────────┐  ┌──────────┐             │
-│  │  OpenAI    │  │ Analytics│  │  Logs    │             │
-│  │    API     │  │          │  │          │             │
-│  └────────────┘  └──────────┘  └──────────┘             │
-└──────────────────────────────────────────────────────────┘
+                ┌────────────────────────┐
+                │     User (CLI /        │
+                │      Notebook)         │
+                └───────────┬────────────┘
+                            │ message
+                            ▼
+                ┌────────────────────────┐
+                │      Chatbot Core      │
+                │  (orchestration loop)  │
+                └─────┬─────────────┬────┘
+                      │             │
+          retrieve    │             │   recall / summarise
+                      ▼             ▼
+          ┌───────────────────┐  ┌──────────────────────┐
+          │    RAG Engine     │  │   Memory Manager     │
+          │  (ChromaDB store) │  │  (history + auto-    │
+          │                   │  │   summarisation)     │
+          └─────────┬─────────┘  └──────────┬───────────┘
+                    │  retrieved chunks     │  history + summary
+                    └───────────┬───────────┘
+                                ▼
+                    ┌────────────────────────┐
+                    │       OpenAI LLM       │
+                    │        (chat)          │
+                    └────────────────────────┘
 ```
 
-The **frontend layer** provides the user interface. The **API gateway** handles load balancing, rate limiting, and authentication. The **backend layer** contains stateless FastAPI servers coordinating three core services: the chatbot core (conversation orchestration), the RAG engine (document retrieval), and the memory manager (history and summarisation). The **data layer** provides persistence: PostgreSQL for user data, Redis for caching and session state, and ChromaDB for vector embeddings. The **external services layer** includes the LLM provider, analytics, and log management.
-
-### Phase 3: Production Hardening
-
-Add the layers that make the system production-ready. Implement JWT authentication to protect the API. Add content moderation (OpenAI Moderation API) on both inputs and outputs. Implement structured logging with trace IDs so that requests can be traced through the system. Add rate limiting to prevent abuse. Set `max_tokens` on API calls and implement cost tracking. Containerise the application with Docker and docker-compose.
-
-### Phase 4: Deployment and Monitoring
-
-Deploy to a cloud provider (Google Cloud Run, AWS, or equivalent) with a public URL. Add a health check endpoint. Configure metrics tracking for latency, cost, and error rate. Verify that the deployed version behaves identically to the local version — environment differences (missing variables, different URLs, network configuration) are the most common source of deployment failures.
+The **chatbot core** orchestrates each turn. The **RAG engine** owns the ChromaDB collection — ingestion, embedding generation, and similarity search. The **memory manager** owns the conversation history and the summarisation policy: recent turns are kept verbatim, older turns are collapsed into a rolling summary when a configurable turn or token threshold is exceeded. The LLM receives a prompt built from the system instructions, the memory-manager output, the retrieved document chunks, and the new user message.
 
 ### Integration Checklist
 
-Use this checklist as a quality gate to verify completeness at the end of each phase.
+Use this checklist as a quality gate to verify completeness before you start the experiments.
 
-**Core Functionality (Phase 2):**
-- Chat API endpoint accepts messages and returns responses
-- RAG retrieval fetches relevant documents for a given query
-- LLM generation creates responses grounded in retrieved context
-- Conversation history is maintained across turns
-- Memory management prevents token overflow
+**Core Functionality:**
+- The chatbot entry point (CLI or notebook) accepts a user message and returns a response.
+- RAG retrieval fetches relevant documents from ChromaDB for a given query.
+- LLM generation creates responses grounded in the retrieved context, with visible source references.
+- Conversation history is maintained across turns in the same session.
+- API keys are loaded from environment variables (e.g. via `python-dotenv`), not hardcoded.
 
-**Data Flow (Phase 2):**
-- User messages flow through the full pipeline: API → RAG retrieval → LLM generation → response
-- Retrieved documents are properly formatted and injected into the LLM prompt
-- Conversation history is stored and retrieved correctly between requests
+**Data Flow:**
+- User messages flow through the full pipeline: user input → memory manager → RAG retrieval → prompt assembly → LLM generation → response.
+- Retrieved document chunks are properly formatted and injected into the LLM prompt.
+- Conversation history is stored and retrieved correctly between turns within a session.
 
-**Error Handling and Security (Phase 3):**
-- Invalid inputs return appropriate HTTP error codes and messages
-- API failures are caught and handled gracefully with fallback responses
-- Authentication is required for protected endpoints
-- Content moderation is active on both inputs and outputs
-- API keys are stored securely in environment variables
-
-**Deployment and Observability (Phase 4):**
-- The application is Dockerised and runs via docker-compose
-- Deployed to a cloud provider with a public URL
-- Health check endpoint responds to monitoring probes
-- Logging uses structured format (JSON)
-- Key metrics are tracked: latency, cost, error rate
+**Context Management:**
+- Running a 40-turn conversation does not exceed the model's context window.
+- When the configured threshold is crossed, older turns are collapsed into a rolling summary.
+- A follow-up question such as "tell me more about that" correctly resolves against earlier content — even after summarisation.
 
 ### Priority Framework
 
 When time is limited, work through priorities in order. Priority 1 must be complete before moving to Priority 2.
 
-**Priority 1: Core Functionality (Must Have).** End-to-end chat with RAG and memory. Basic error handling. This is Phases 1–2.
+**Priority 1: Core Functionality (Must Have).** End-to-end chat with RAG over ChromaDB and conversation memory with auto-summarisation. This is Phases 1–2.
 
-**Priority 2: Production Readiness (Should Have).** Authentication, moderation, logging, Docker, cloud deployment. This is Phases 3–4.
-
-**Priority 3: Polish (Nice to Have).** Advanced RAG (re-ranking, hybrid search), analytics dashboard, A/B testing, semantic caching.
-
-**Priority 4: Documentation (Important).** README, ADRs, architecture diagram. Allocate dedicated time for this regardless of progress on other priorities.
+**Priority 2: Documentation (Important).** README, at least one ADR, and an architecture diagram. Allocate dedicated time for this regardless of progress on other priorities.
 
 ## Experiments
 
@@ -208,7 +163,6 @@ Test how the system handles inputs outside the happy path:
 - **Very long input:** Send a message over 1,000 words. The system should truncate or handle it gracefully.
 - **Gibberish:** Send random characters. The system should ask for clarification.
 - **Off-topic queries:** Ask about something completely outside the domain. The system should redirect politely.
-- **Adversarial prompts:** Attempt prompt injection ("ignore your instructions and..."). The system should not comply.
 
 Record the result of each test: pass (reasonable response), fail (crash, unhelpful error, or inappropriate response).
 
@@ -217,9 +171,7 @@ Record the result of each test: pass (reasonable response), fail (crash, unhelpf
 Measure system performance under realistic conditions:
 
 - **Latency:** Time 20+ requests and compute p50, p95, and p99 response times.
-- **Throughput:** Send 10 concurrent requests and verify all complete successfully within acceptable time.
-- **Memory stability:** Run a 50-turn conversation and verify that token counts stay within limits (no context overflow).
-- **Cost:** Calculate the average cost per conversation based on token usage and API pricing.
+- **Memory stability:** Run a 50-turn conversation and verify that token counts stay within limits. This directly tests whether auto-summarisation is working — without it, a 50-turn conversation will overflow the context window.
 
 ```python
 import time
@@ -261,8 +213,7 @@ Document your experimental results in a structured format. Tables are more effec
 |--------|-------|
 | p50 latency | 1.8s |
 | p95 latency | 3.2s |
-| Cost per conversation (avg) | $0.003 |
-| Concurrent requests handled | 10 |
+| 50-turn conversation fits in context | Pass |
 
 **Robustness:**
 
@@ -272,9 +223,8 @@ Document your experimental results in a structured format. Tables are more effec
 | Long input (1,000+ words) | Pass |
 | Gibberish | Pass |
 | Off-topic query | Pass |
-| Prompt injection | Pass |
 
-Compare against a baseline where appropriate. For example, compare response quality with and without RAG, or compare latency with and without semantic caching. Baseline comparisons demonstrate the value your engineering decisions added.
+Compare against a baseline where appropriate. For example, compare response quality with and without RAG, or measure the context-window size of a long conversation with auto-summarisation enabled versus disabled. Baseline comparisons demonstrate the value your engineering decisions added.
 
 ## Conclusion
 
