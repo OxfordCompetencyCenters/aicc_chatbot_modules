@@ -2,9 +2,9 @@
 
 Hands-on training in building production-ready chatbots using Large Language Models (LLMs). Participants progress from fundamental concepts through advanced techniques including Retrieval-Augmented Generation (RAG), memory management, deployment, analytics, and production hardening.
 
-**Duration:** 20 hours across 8 modules
+**Duration:** 12.5 hours across 5 core modules (3 optional modules are self-paced)
 **Level:** Intermediate
-**Delivery:** One module per week over 8 weeks
+**Delivery:** One core module per week over 5 weeks
 
 ## Prerequisites
 
@@ -89,17 +89,14 @@ Agentic RAG with multi-step retrieval and query expansion. Cross-encoder re-rank
 Short-term vs long-term memory architectures. Conversation window management strategies. Conversation summarisation techniques. Retrieval-based memory systems. Selective memory and importance scoring. User profile building and personalisation.
 
 ### Module 5 (Optional): Deployment Architecture
-**Duration:** 2.5 hours
 
 RESTful API design with FastAPI. Frontend development (Streamlit, React). Docker containerisation and multi-stage builds. Docker Compose for local development. Cloud deployment (Google Cloud Run). JWT authentication and secrets management.
 
 ### Module 6 (Optional): Chatbot Analytics & Observability
-**Duration:** 2.5 hours
 
 User engagement metrics (DAU, retention, sessions). Conversation quality analytics. Performance monitoring (latency, cost tracking). Structured logging and distributed tracing with OpenTelemetry. A/B testing and experimentation.
 
 ### Module 7 (Optional): Production Best Practices & Advanced Topics
-**Duration:** 2.5 hours
 
 Production prompt engineering patterns. Content moderation and safety (OpenAI Moderation API). PII detection and redaction. Cost optimisation strategies. Horizontal scaling with Redis and load balancing. Rate limiting and backpressure. Alternative LLM providers (Anthropic, open-source). Production deployment checklist.
 
