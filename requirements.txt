@@ -13,6 +13,10 @@ tiktoken~=0.8
 # Vector database (used from Module 2 onwards)
 chromadb~=0.5
 
+# Module 3 extras (small, pure-Python)
+rank-bm25~=0.2
+networkx~=3.3
+
 # Web UI for the capstone (Module 8)
 streamlit~=1.38
 

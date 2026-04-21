@@ -13,9 +13,14 @@ env/
 # Jupyter
 .ipynb_checkpoints/
 
-# Local ChromaDB persistence
-chroma_store/
+# Local ChromaDB persistence (any notebook may spin up its own store)
+chroma_store*/
 *.chroma/
+conversation_memory*/
+
+# Capstone profile files written by Module 4.5
+profiles_m4_5/
+profiles/
 
 # OS
 .DS_Store
