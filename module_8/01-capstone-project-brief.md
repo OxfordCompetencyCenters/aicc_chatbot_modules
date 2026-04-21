@@ -104,7 +104,7 @@ Use this checklist as a quality gate to verify completeness before you start the
 - Conversation history is stored and retrieved correctly between turns within a session.
 
 **Context Management:**
-- Running a 40-turn conversation does not exceed the model's context window.
+- Running a 20-turn conversation does not exceed the model's context window.
 - When the configured threshold is crossed, older turns are collapsed into a rolling summary.
 - A follow-up question such as "tell me more about that" correctly resolves against earlier content — even after summarisation.
 
@@ -122,7 +122,7 @@ Once the system is built, evaluate it systematically. The experiments below asse
 
 ### Retrieval Quality
 
-Prepare a set of 10–20 test queries with known answers that exist in your document corpus. For each query, record which documents the RAG engine retrieves and whether the correct document appears in the top-k results.
+Prepare a small set of 5–10 test queries with known answers that exist in your document corpus. For each query, record which documents the RAG engine retrieves and whether the correct document appears in the top-k results. A handful of well-chosen queries is more useful than a large set of shallow ones.
 
 ```python
 test_queries = [
@@ -168,52 +168,48 @@ Record the result of each test: pass (reasonable response), fail (crash, unhelpf
 
 ### Performance
 
-Measure system performance under realistic conditions:
+Measure two simple performance properties:
 
-- **Latency:** Time 20+ requests and compute p50, p95, and p99 response times.
-- **Memory stability:** Run a 50-turn conversation and verify that token counts stay within limits. This directly tests whether auto-summarisation is working — without it, a 50-turn conversation will overflow the context window.
+- **Latency:** Time each of your test queries once and report the average response time. No need for p95/p99 — a mean over 5–10 requests is enough to give a sense of typical latency.
+- **Memory stability:** Run a 20-turn conversation and confirm that token counts stay within the model's context window. This directly tests whether auto-summarisation is working — without it, a long conversation would eventually overflow the window.
 
 ```python
 import time
-import statistics
 
 latencies = []
-for query in test_queries:
+for test in test_queries:
     start = time.time()
-    response = chatbot.chat(query["query"])
+    response = chatbot.chat(test["query"])
     latencies.append(time.time() - start)
 
-print(f"p50 latency: {statistics.median(latencies):.2f}s")
-print(f"p95 latency: {sorted(latencies)[int(len(latencies) * 0.95)]:.2f}s")
+print(f"Average latency: {sum(latencies) / len(latencies):.2f}s")
 ```
 
 ## Results
 
-Document your experimental results in a structured format. Tables are more effective than prose for conveying quantitative data.
+Document your experimental results in a structured format. Tables are more effective than prose for conveying quantitative data. The numbers below are illustrative — yours will differ. The goal is to *report* your results honestly and clearly, not to hit any particular target.
 
 **Retrieval quality:**
 
 | Metric | Value |
 |--------|-------|
-| Test queries | 20 |
-| Hit rate (top-5) | 85% |
-| Average top-1 similarity score | 0.82 |
+| Test queries | 8 |
+| Hit rate (top-5) | 6 / 8 |
 
 **Response quality:**
 
-| Rating | Count | Percentage |
-|--------|-------|------------|
-| Correct | 15 | 75% |
-| Partially correct | 3 | 15% |
-| Incorrect | 2 | 10% |
+| Rating | Count |
+|--------|-------|
+| Correct | 6 |
+| Partially correct | 1 |
+| Incorrect | 1 |
 
 **Performance:**
 
 | Metric | Value |
 |--------|-------|
-| p50 latency | 1.8s |
-| p95 latency | 3.2s |
-| 50-turn conversation fits in context | Pass |
+| Average latency (8 requests) | 2.1s |
+| 20-turn conversation fits in context | Pass |
 
 **Robustness:**
 
@@ -224,7 +220,7 @@ Document your experimental results in a structured format. Tables are more effec
 | Gibberish | Pass |
 | Off-topic query | Pass |
 
-Compare against a baseline where appropriate. For example, compare response quality with and without RAG, or measure the context-window size of a long conversation with auto-summarisation enabled versus disabled. Baseline comparisons demonstrate the value your engineering decisions added.
+**Optional baseline (if time allows).** Pick *one* comparison that illustrates the value of an engineering choice you made — for example, retrieval hit rate with two different chunk sizes, or the token count of a 20-turn conversation with auto-summarisation enabled versus disabled. A single well-presented comparison is sufficient.
 
 ## Conclusion
 

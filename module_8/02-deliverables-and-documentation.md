@@ -129,9 +129,9 @@ print(reply.sources)
 pytest tests/
 
 ## Performance
-- Response Time: p95 < 3 seconds
+- Average response time: ~2 seconds per query
 - Cost: ~$0.002 per conversation (average)
-- 50-turn conversations stay within the model's context window via auto-summarisation
+- 20-turn conversations stay within the model's context window via auto-summarisation
 
 ## Limitations
 - Only supports English language
@@ -272,7 +272,7 @@ Use this checklist as a final quality gate.
 - Retrieval quality evaluated against a set of test queries with known answers
 - Response quality assessed (correct, partially correct, incorrect)
 - Robustness tested across edge cases (empty input, long input, gibberish, off-topic)
-- Performance benchmarks documented (latency p50/p95, 50-turn conversation stays within context)
+- Performance benchmarks documented (average latency, 20-turn conversation stays within context)
 - Results presented in tables with quantitative metrics
 - Baseline comparison included where applicable (e.g. with / without RAG, with / without auto-summarisation)
 
@@ -292,7 +292,7 @@ Work through this exercise in four phases.
 
 **Phase 1: Integration Testing (20 minutes).** Verify the end-to-end flow locally. Send a message through the CLI or notebook, confirm RAG retrieval over ChromaDB and LLM generation work correctly, and verify the response appears with source citations. Test that conversation memory persists across turns within a session and that auto-summarisation kicks in once the configured threshold is crossed. Fix any broken connections.
 
-**Phase 2: Run Experiments (30 minutes).** Execute the experiments defined in the project brief. Run your test queries through the system and record retrieval hit rates and response quality ratings. Test the robustness scenarios (empty input, gibberish, off-topic, very long input). Measure latency across 20+ requests and compute p50/p95. Run a 50-turn conversation and confirm token counts stay within the model's context window.
+**Phase 2: Run Experiments (30 minutes).** Execute the experiments defined in the project brief. Run your 5–10 test queries through the system and record retrieval hit rates and response quality ratings. Test the robustness scenarios (empty input, gibberish, off-topic, very long input). Record the average latency across those same queries. Run a 20-turn conversation and confirm token counts stay within the model's context window.
 
 **Phase 3: Document Results (20 minutes).** Compile your experimental results into the tables described in the project brief. Write the conclusion: what worked, what didn't, key challenges, lessons learned, and future improvements. Add the results to your project documentation.
 
